@@ -1,0 +1,17 @@
+{
+  "name": "VoiceBridge AI",
+  "short_name": "VoiceBridge",
+  "description": "Real-time multilingual AI voice translation.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#F5F7FA",
+  "theme_color": "#4A90E2",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2998/2998881.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
