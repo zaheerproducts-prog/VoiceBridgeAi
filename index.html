@@ -19,7 +19,7 @@
 
         /* Language Selector Bar */
         .lang-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: white; border-bottom: 1px solid #eee; z-index: 10; }
-        select { padding: 8px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; background: #f9f9f9; }
+        select { padding: 8px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; background: #f9f9f9; max-width: 45%; }
 
         /* Chat Area */
         .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
@@ -63,23 +63,37 @@
 
         <div class="lang-bar">
             <select id="langA">
-                <option value="ur-PK">Urdu (A)</option>
-                <option value="en-US">English (A)</option>
-                <option value="ar-SA">Arabic (A)</option>
-                <option value="es-ES">Spanish (A)</option>
-                <option value="fr-FR">French (A)</option>
-                <option value="zh-CN">Chinese (A)</option>
-                <option value="ja-JP">Japanese (A)</option>
+                <option value="ur-PK">Urdu</option>
+                <option value="en-US">English</option>
+                <option value="ar-SA">Arabic</option>
+                <option value="es-ES">Spanish</option>
+                <option value="fr-FR">French</option>
+                <option value="zh-CN">Chinese</option>
+                <option value="ja-JP">Japanese</option>
+                <option value="hi-IN">Hindi</option>
+                <option value="bn-IN">Bengali</option>
+                <option value="ru-RU">Russian</option>
+                <option value="pt-BR">Portuguese</option>
+                <option value="de-DE">German</option>
+                <option value="id-ID">Indonesian</option>
+                <option value="tr-TR">Turkish</option>
             </select>
             <span>⇄</span>
             <select id="langB">
-                <option value="en-US">English (B)</option>
-                <option value="ur-PK">Urdu (B)</option>
-                <option value="ar-SA">Arabic (B)</option>
-                <option value="es-ES">Spanish (B)</option>
-                <option value="fr-FR">French (B)</option>
-                <option value="zh-CN">Chinese (B)</option>
-                <option value="ja-JP">Japanese (B)</option>
+                <option value="en-US">English</option>
+                <option value="ur-PK">Urdu</option>
+                <option value="ar-SA">Arabic</option>
+                <option value="es-ES">Spanish</option>
+                <option value="fr-FR">French</option>
+                <option value="zh-CN">Chinese</option>
+                <option value="ja-JP">Japanese</option>
+                <option value="hi-IN">Hindi</option>
+                <option value="bn-IN">Bengali</option>
+                <option value="ru-RU">Russian</option>
+                <option value="pt-BR">Portuguese</option>
+                <option value="de-DE">German</option>
+                <option value="id-ID">Indonesian</option>
+                <option value="tr-TR">Turkish</option>
             </select>
         </div>
 
@@ -108,7 +122,6 @@
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-        // Function to speak text
         function speakText(text, langCode) {
             window.speechSynthesis.cancel();
             if (!text) return;
@@ -118,7 +131,6 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // Function to add message to screen
         function addMessage(sender, original, translated) {
             const msgDiv = document.createElement('div');
             msgDiv.className = sender === 'A' ? 'message msg-a' : 'message msg-b';
@@ -129,10 +141,9 @@
             `;
             
             chatContainer.appendChild(msgDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight; 
         }
 
-        // Main translation logic
         async function processSpeech(transcript, fromLang, toLang, sender) {
             const fromCode = fromLang.split('-')[0];
             const toCode = toLang.split('-')[0];
@@ -157,7 +168,6 @@
         }
 
         if (SpeechRecognition) {
-            // Setup Person A Recognition
             const recA = new SpeechRecognition();
             recA.continuous = false;
             recA.interimResults = false;
@@ -177,8 +187,6 @@
             recA.onend = () => micA.classList.remove('listening');
             recA.onerror = () => micA.classList.remove('listening');
 
-
-            // Setup Person B Recognition
             const recB = new SpeechRecognition();
             recB.continuous = false;
             recB.interimResults = false;
