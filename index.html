@@ -4,186 +4,203 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoiceBridge AI</title>
-       <link rel="manifest" href="manifest.json">
-    <script type="application/json" id="web-app-manifest">
-    {
-        "name": "VoiceBridge AI",
-        "short_name": "VoiceBridge",
-        "description": "Real-time multilingual AI voice translation.",
-        "start_url": "index.html",
-        "display": "standalone",
-        "background_color": "#F5F7FA",
-        "theme_color": "#4A90E2",
-        "icons": [
-            {
-                "src": "https://cdn-icons-png.flaticon.com/512/2998/2998881.png",
-                "sizes": "512x512",
-                "type": "image/png",
-                "purpose": "any maskable"
-            }
-        ]
-    }
-    </script>
-
+    
+    <link rel="manifest" href="manifest.json">
+    
     <style>
-        :root { --primary-color: #4A90E2; --bg-color: #F5F7FA; --text-color: #333333; --card-bg: #FFFFFF; }
+        :root { --primary: #4A90E2; --bg: #F5F7FA; --text: #333; --card: #FFF; --personA: #E2EAF4; --personB: #4A90E2; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; }
-        .app-container { width: 100%; max-width: 480px; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-        header { text-align: center; padding: 15px 0; }
-        h1 { color: var(--primary-color); font-size: 28px; letter-spacing: 1px; }
-        .language-controls { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .lang-box { display: flex; flex-direction: column; gap: 5px; width: 40%; }
-        label { font-size: 12px; color: #666; font-weight: bold; }
-        select { padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; background: white; width: 100%; }
-        .swap-btn { background: none; border: none; font-size: 24px; color: var(--primary-color); cursor: pointer; padding: 10px; }
-        .mic-section { display: flex; justify-content: center; margin: 20px 0; }
-        .mic-btn { width: 100px; height: 100px; border-radius: 50%; background-color: var(--primary-color); color: white; border: none; font-size: 40px; display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 15px rgba(74, 144, 226, 0.4); cursor: pointer; }
+        body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
+        
+        .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; height: 100vh; background: var(--bg); }
+        
+        header { text-align: center; padding: 15px 0; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 10; }
+        h1 { color: var(--primary); font-size: 22px; letter-spacing: 1px; }
+
+        /* Language Selector Bar */
+        .lang-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: white; border-bottom: 1px solid #eee; z-index: 10; }
+        select { padding: 8px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; background: #f9f9f9; }
+
+        /* Chat Area */
+        .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        
+        .message { max-width: 85%; padding: 12px 15px; border-radius: 15px; font-size: 16px; line-height: 1.4; word-wrap: break-word; }
+        .message .original { font-size: 12px; color: #666; margin-bottom: 5px; font-style: italic; }
+        .message .translated { font-size: 18px; font-weight: bold; }
+        
+        /* Person A (Left) */
+        .msg-a { align-self: flex-start; background: var(--personA); color: var(--text); border-bottom-left-radius: 2px; }
+        .msg-a .original { color: #555; }
+        
+        /* Person B (Right) */
+        .msg-b { align-self: flex-end; background: var(--personB); color: white; border-bottom-right-radius: 2px; }
+        .msg-b .original { color: #D1E3F8; }
+
+        /* Controls Area */
+        .controls { display: flex; background: white; padding: 15px; gap: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        
+        .mic-card { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px; border-radius: 12px; background: #f9f9f9; }
+        .mic-card span { font-size: 12px; font-weight: bold; color: #666; }
+        
+        .mic-btn { width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.2s; }
         .mic-btn:active { transform: scale(0.95); }
-        .text-output { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-height: 120px; display: flex; flex-direction: column; gap: 15px; }
-        .text-box { display: flex; flex-direction: column; gap: 5px; }
-        .text-box h3 { font-size: 14px; color: #666; text-transform: uppercase; }
-        .text-box p { font-size: 18px; min-height: 25px; color: var(--text-color); }
-        .divider { height: 1px; background: #eee; width: 100%; }
-        .play-btn { align-self: flex-end; background-color: #E2EAF4; color: var(--primary-color); border: none; padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        
+        .btn-a { background: #E2EAF4; color: var(--primary); }
+        .btn-b { background: var(--primary); color: white; }
+        
+        .btn-a.listening { background: #ff4757; color: white; animation: pulse 1.5s infinite; }
+        .btn-b.listening { background: #ff4757; color: white; animation: pulse 1.5s infinite; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
     </style>
 </head>
 <body>
+
     <div class="app-container">
-        <header><h1>VOICEBRIDGE AI</h1></header>
-        <div class="language-controls">
-            <div class="lang-box">
-                <label>My Language</label>
-                <select id="sourceLang">
-                    <option value="ur-PK">Urdu</option>
-                    <option value="en-US">English</option>
-                    <option value="ar-SA">Arabic</option>
-                    <option value="es-ES">Spanish</option>
-                    <option value="fr-FR">French</option>
-                    <option value="zh-CN">Chinese</option>
-                    <option value="ja-JP">Japanese</option>
-                </select>
-            </div>
-            <button class="swap-btn" id="swapBtn" title="Swap Languages">⇄</button>
-            <div class="lang-box">
-                <label>Other Language</label>
-                <select id="targetLang">
-                    <option value="en-US">English</option>
-                    <option value="ur-PK">Urdu</option>
-                    <option value="ar-SA">Arabic</option>
-                    <option value="es-ES">Spanish</option>
-                    <option value="fr-FR">French</option>
-                    <option value="zh-CN">Chinese</option>
-                    <option value="ja-JP">Japanese</option>
-                </select>
-            </div>
+        <header>
+            <h1>VOICEBRIDGE AI</h1>
+        </header>
+
+        <div class="lang-bar">
+            <select id="langA">
+                <option value="ur-PK">Urdu (A)</option>
+                <option value="en-US">English (A)</option>
+                <option value="ar-SA">Arabic (A)</option>
+                <option value="es-ES">Spanish (A)</option>
+                <option value="fr-FR">French (A)</option>
+                <option value="zh-CN">Chinese (A)</option>
+                <option value="ja-JP">Japanese (A)</option>
+            </select>
+            <span>⇄</span>
+            <select id="langB">
+                <option value="en-US">English (B)</option>
+                <option value="ur-PK">Urdu (B)</option>
+                <option value="ar-SA">Arabic (B)</option>
+                <option value="es-ES">Spanish (B)</option>
+                <option value="fr-FR">French (B)</option>
+                <option value="zh-CN">Chinese (B)</option>
+                <option value="ja-JP">Japanese (B)</option>
+            </select>
         </div>
-        <div class="mic-section">
-            <button class="mic-btn" id="micBtn">🎤</button>
+
+        <div class="chat-container" id="chatContainer">
+            <!-- Messages will appear here -->
         </div>
-        <div class="text-output">
-            <div class="text-box">
-                <h3>Original Speech</h3>
-                <p id="originalText">...</p>
+
+        <div class="controls">
+            <div class="mic-card">
+                <button class="mic-btn btn-a" id="micA">🎤</button>
+                <span>Person A</span>
             </div>
-            <div class="divider"></div>
-            <div class="text-box">
-                <h3>Translation</h3>
-                <p id="translatedText">...</p>
+            <div class="mic-card">
+                <button class="mic-btn btn-b" id="micB">🎤</button>
+                <span>Person B</span>
             </div>
-            <button class="play-btn" id="playBtn">🔊 PLAY</button>
         </div>
     </div>
+
     <script>
-        const micBtn = document.getElementById('micBtn');
-        const originalText = document.getElementById('originalText');
-        const translatedText = document.getElementById('translatedText');
-        const sourceLang = document.getElementById('sourceLang');
+        const micA = document.getElementById('micA');
+        const micB = document.getElementById('micB');
+        const langA = document.getElementById('langA');
+        const langB = document.getElementById('langB');
+        const chatContainer = document.getElementById('chatContainer');
+
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+        // Function to speak text
         function speakText(text, langCode) {
             window.speechSynthesis.cancel();
-            if (!text || text.includes("Translation failed") || text.includes("error")) return;
+            if (!text) return;
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = langCode; 
             utterance.rate = 0.9; 
             window.speechSynthesis.speak(utterance);
         }
 
-        if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
-            recognition.continuous = false; 
-            recognition.interimResults = false; 
-
-            micBtn.addEventListener('click', () => {
-                if (originalText.innerText === "Listening...") {
-                    recognition.stop();
-                    return;
-                }
-                recognition.lang = sourceLang.value; 
-                try {
-                    recognition.start();
-                    originalText.innerText = "Listening...";
-                    translatedText.innerText = "...";
-                } catch(e) {
-                    originalText.innerText = "Error: Microphone already listening.";
-                }
-            });
-
-            recognition.onresult = async (event) => {
-                const transcript = event.results[0][0].transcript;
-                originalText.innerText = transcript;
-                translatedText.innerText = "Translating...";
-                const fromLang = sourceLang.value.split('-')[0]; 
-                const toLang = document.getElementById('targetLang').value.split('-')[0]; 
-                try {
-                    const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(transcript)}&langpair=${fromLang}|${toLang}`);
-                    const data = await response.json();
-                    if (data.responseData && data.responseData.translatedText) {
-                        translatedText.innerText = data.responseData.translatedText;
-                        speakText(data.responseData.translatedText, document.getElementById('targetLang').value);
-                    } else {
-                        translatedText.innerText = "Translation failed. Please try again.";
-                    }
-                } catch (error) {
-                    translatedText.innerText = "Network error. Check your internet.";
-                }
-            };
-
-            recognition.onerror = (event) => {
-                if (event.error === 'not-allowed') {
-                    originalText.innerText = "Microphone permission denied. Please allow it.";
-                } else {
-                    originalText.innerText = "Error: " + event.error;
-                }
-            };
-
-            recognition.onend = () => {
-                if (originalText.innerText === "Listening...") {
-                    originalText.innerText = "..."; 
-                }
-            };
-        } else {
-            micBtn.addEventListener('click', () => {
-                originalText.innerText = "Speech recognition is not supported. Please use Google Chrome.";
-            });
+        // Function to add message to screen
+        function addMessage(sender, original, translated) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = sender === 'A' ? 'message msg-a' : 'message msg-b';
+            
+            msgDiv.innerHTML = `
+                <div class="original">${original}</div>
+                <div class="translated">${translated}</div>
+            `;
+            
+            chatContainer.appendChild(msgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to bottom
         }
 
-        document.getElementById('swapBtn').addEventListener('click', () => {
-            const source = document.getElementById('sourceLang');
-            const target = document.getElementById('targetLang');
-            const temp = source.value;
-            source.value = target.value;
-            target.value = temp;
-        });
+        // Main translation logic
+        async function processSpeech(transcript, fromLang, toLang, sender) {
+            const fromCode = fromLang.split('-')[0];
+            const toCode = toLang.split('-')[0];
+            
+            try {
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(transcript)}&langpair=${fromCode}|${toCode}`);
+                const data = await response.json();
+                
+                let translatedText = "";
+                if (data.responseData && data.responseData.translatedText) {
+                    translatedText = data.responseData.translatedText;
+                } else {
+                    translatedText = "Translation failed.";
+                }
 
-        document.getElementById('playBtn').addEventListener('click', () => {
-            const textToSpeak = translatedText.innerText;
-            const targetLang = document.getElementById('targetLang').value;
-            if (textToSpeak && textToSpeak !== "...") {
-                speakText(textToSpeak, targetLang);
+                addMessage(sender, transcript, translatedText);
+                speakText(translatedText, toLang);
+
+            } catch (error) {
+                addMessage(sender, transcript, "Network error. Check internet.");
             }
-        });
+        }
+
+        if (SpeechRecognition) {
+            // Setup Person A Recognition
+            const recA = new SpeechRecognition();
+            recA.continuous = false;
+            recA.interimResults = false;
+            
+            micA.addEventListener('click', () => {
+                recA.lang = langA.value;
+                try {
+                    recA.start();
+                    micA.classList.add('listening');
+                } catch(e) { console.log("Already listening"); }
+            });
+
+            recA.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                processSpeech(transcript, langA.value, langB.value, 'A');
+            };
+            recA.onend = () => micA.classList.remove('listening');
+            recA.onerror = () => micA.classList.remove('listening');
+
+
+            // Setup Person B Recognition
+            const recB = new SpeechRecognition();
+            recB.continuous = false;
+            recB.interimResults = false;
+            
+            micB.addEventListener('click', () => {
+                recB.lang = langB.value;
+                try {
+                    recB.start();
+                    micB.classList.add('listening');
+                } catch(e) { console.log("Already listening"); }
+            });
+
+            recB.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                processSpeech(transcript, langB.value, langA.value, 'B');
+            };
+            recB.onend = () => micB.classList.remove('listening');
+            recB.onerror = () => micB.classList.remove('listening');
+
+        } else {
+            alert("Speech recognition is not supported in this browser.");
+        }
     </script>
 </body>
-  </html>
+    </html>
