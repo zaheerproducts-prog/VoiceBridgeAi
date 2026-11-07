@@ -22,8 +22,8 @@
         .message { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 16px; line-height: 1.4; word-wrap: break-word; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); position: relative; }
         .message .original { font-size: 12px; color: #666; font-style: italic; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 5px; }
         .message .translated { font-size: 16px; font-weight: 500; }
-        .message img { max-width: 100%; border-radius: 8px; margin-top: 5px; }
         
+        /* WhatsApp Bubble Styles */
         .msg-a { align-self: flex-start; background: var(--personA); border-top-left-radius: 0; }
         .msg-b { align-self: flex-end; background: var(--personB); border-top-right-radius: 0; }
 
@@ -31,18 +31,18 @@
         .checkmark { font-size: 14px; color: #999; }
         .checkmark.read { color: #34B7F1; }
 
-        .input-area { display: flex; background: #f0f0f0; padding: 10px; gap: 8px; align-items: center; }
+        /* The New Bottom Bar */
+        .bottom-bar { display: flex; background: #f0f0f0; padding: 10px; gap: 8px; align-items: center; }
         .icon-btn { background: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .input-area input[type="text"] { flex: 1; padding: 12px; border: none; border-radius: 20px; font-size: 16px; outline: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        
+        .input-wrapper { flex: 1; display: flex; background: #fff; border-radius: 20px; padding: 5px 10px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .input-wrapper input[type="text"] { flex: 1; border: none; font-size: 16px; outline: none; padding: 8px; background: transparent; }
+        
+        .mic-btn { background: none; border: none; font-size: 22px; color: var(--primary); cursor: pointer; padding: 5px; }
+        .mic-btn.listening { color: #ff4757; animation: pulse 1.5s infinite; }
+        
         .send-btn { padding: 10px 15px; background: #00a884; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
 
-        .controls { display: flex; background: #f0f0f0; padding: 10px 15px 15px 15px; gap: 10px; }
-        .mic-card { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .mic-card span { font-size: 12px; font-weight: bold; color: #666; }
-        .mic-btn { width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .btn-a { background: #fff; color: var(--primary); }
-        .btn-b { background: var(--primary); color: white; }
-        .btn-a.listening, .btn-b.listening { background: #ff4757; color: white; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
     </style>
 </head>
@@ -51,6 +51,7 @@
     <div class="app-container">
         <header><h1>VOICEBRIDGE AI</h1></header>
 
+        <!-- Language Selectors -->
         <div class="lang-bar">
             <select id="langA">
                 <option value="ur-PK">Urdu</option>
@@ -73,37 +74,32 @@
             </select>
         </div>
 
+        <!-- Chat Area -->
         <div class="chat-container" id="chatContainer"></div>
 
-        <div class="input-area">
+        <!-- New Single Bottom Bar -->
+        <div class="bottom-bar">
             <button class="icon-btn" id="cameraBtn">📷</button>
             <button class="icon-btn" id="galleryBtn">🖼️</button>
-            <button class="icon-btn" id="locationBtn" style="color: #EA4335;">📍</button>
-            <input type="text" id="textInput" placeholder="Message...">
+            
+            <div class="input-wrapper">
+                <input type="text" id="textInput" placeholder="Message...">
+                <!-- Single Mic Button inside the text box -->
+                <button class="mic-btn" id="micBtn">🎤</button>
+            </div>
+            
             <button class="send-btn" id="sendBtn">➤</button>
         </div>
 
         <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
         <input type="file" id="galleryInput" accept="image/*,video/*" style="display:none;">
-
-        <div class="controls">
-            <div class="mic-card">
-                <button class="mic-btn btn-a" id="micA">🎤</button>
-                <span>Person A</span>
-            </div>
-            <div class="mic-card">
-                <button class="mic-btn btn-b" id="micB">🎤</button>
-                <span>Person B</span>
-            </div>
-        </div>
     </div>
 
-    <!-- Load Firebase SDK -->
+    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Your Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDywymuYlmjORVyBVkyHPl-f6T7WMOi3t4",
             authDomain: "voicebridgeai-92e90.firebaseapp.com",
@@ -117,8 +113,7 @@
         const db = getFirestore(app);
 
         // Elements
-        const micA = document.getElementById('micA');
-        const micB = document.getElementById('micB');
+        const micBtn = document.getElementById('micBtn');
         const langA = document.getElementById('langA');
         const langB = document.getElementById('langB');
         const chatContainer = document.getElementById('chatContainer');
@@ -126,7 +121,6 @@
         const sendBtn = document.getElementById('sendBtn');
         const cameraBtn = document.getElementById('cameraBtn');
         const galleryBtn = document.getElementById('galleryBtn');
-        const locationBtn = document.getElementById('locationBtn');
         const cameraInput = document.getElementById('cameraInput');
         const galleryInput = document.getElementById('galleryInput');
 
@@ -146,7 +140,6 @@
             return now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
         }
 
-        // Function to render a message on screen
         function renderMessage(data) {
             const msgDiv = document.createElement('div');
             msgDiv.className = data.sender === 'A' ? 'message msg-a' : 'message msg-b';
@@ -167,18 +160,16 @@
             chatContainer.scrollTop = chatContainer.scrollHeight; 
         }
 
-        // Listen for messages from Firebase
         const messagesRef = collection(db, "messages");
         const q = query(messagesRef, orderBy("timestamp"));
 
         onSnapshot(q, (snapshot) => {
-            chatContainer.innerHTML = ''; // Clear chat
+            chatContainer.innerHTML = ''; 
             snapshot.forEach((doc) => {
                 renderMessage(doc.data());
             });
         });
 
-        // Send message to Firebase
         async function sendMessageToDB(sender, original, translated) {
             try {
                 await addDoc(messagesRef, {
@@ -193,11 +184,15 @@
             }
         }
 
-        async function processTranslation(transcript, fromLang, toLang, sender) {
+        async function processTranslation(transcript) {
             let translatedText = "";
+            
+            // Person A is the sender by default. Person B is the receiver.
+            // We translate from Person A's language (langA) to Person B's language (langB).
+            const fromCode = langA.value.split('-')[0];
+            const toCode = langB.value.split('-')[0];
+
             if (transcript) {
-                const fromCode = fromLang.split('-')[0];
-                const toCode = toLang.split('-')[0];
                 try {
                     const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(transcript)}&langpair=${fromCode}|${toCode}`);
                     const data = await response.json();
@@ -206,74 +201,53 @@
                     translatedText = "Network error.";
                 }
             }
-            // Save to Firebase instead of just showing on screen
-            sendMessageToDB(sender, transcript, translatedText);
-            if (translatedText) speakText(translatedText, toLang);
+            
+            // Send as Person A (Left side)
+            sendMessageToDB('A', transcript, translatedText);
+            if (translatedText) speakText(translatedText, langB.value);
         }
 
-        // Text Input
+        // Send via Text
         sendBtn.addEventListener('click', () => {
             const text = textInput.value.trim();
             if (!text) return;
-            processTranslation(text, langA.value, langB.value, 'A');
+            processTranslation(text);
             textInput.value = ''; 
         });
+        
         textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendBtn.click(); });
 
-        // Camera & Gallery (Still local for now, as uploading images requires storage setup)
+        // Send via Voice
+        if (SpeechRecognition) {
+            const rec = new SpeechRecognition();
+            rec.continuous = false; 
+            rec.interimResults = false;
+            
+            micBtn.addEventListener('click', () => {
+                rec.lang = langA.value; // Listens in Person A's language
+                try { 
+                    rec.start(); 
+                    micBtn.classList.add('listening'); 
+                } catch(e) {}
+            });
+            
+            rec.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                processTranslation(transcript);
+            };
+            rec.onend = () => micBtn.classList.remove('listening');
+            rec.onerror = () => micBtn.classList.remove('listening');
+        }
+
+        // Camera & Gallery
         cameraBtn.addEventListener('click', () => cameraInput.click());
         galleryBtn.addEventListener('click', () => galleryInput.click());
         function handleMediaUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            alert("Image upload to cloud is a Phase 3 feature! For now, this only shows locally.");
+            alert("Image upload to cloud is coming soon!");
             event.target.value = '';
         }
         cameraInput.addEventListener('change', handleMediaUpload);
         galleryInput.addEventListener('change', handleMediaUpload);
-
-        // Location
-        locationBtn.addEventListener('click', () => {
-            if (navigator.geolocation) {
-                locationBtn.innerText = "⏳";
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        const mapUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-                        sendMessageToDB('A', '', `Location Shared: ${mapUrl}`);
-                        locationBtn.innerText = "📍";
-                    },
-                    (error) => {
-                        alert("Please allow location access.");
-                        locationBtn.innerText = "📍";
-                    }
-                );
-            }
-        });
-
-        // Voice
-        if (SpeechRecognition) {
-            const recA = new SpeechRecognition();
-            recA.continuous = false; recA.interimResults = false;
-            micA.addEventListener('click', () => {
-                recA.lang = langA.value;
-                try { recA.start(); micA.classList.add('listening'); } catch(e) {}
-            });
-            recA.onresult = (event) => processTranslation(event.results[0][0].transcript, langA.value, langB.value, 'A');
-            recA.onend = () => micA.classList.remove('listening');
-            recA.onerror = () => micA.classList.remove('listening');
-
-            const recB = new SpeechRecognition();
-            recB.continuous = false; recB.interimResults = false;
-            micB.addEventListener('click', () => {
-                recB.lang = langB.value;
-                try { recB.start(); micB.classList.add('listening'); } catch(e) {}
-            });
-            recB.onresult = (event) => processTranslation(event.results[0][0].transcript, langB.value, langA.value, 'B');
-            recB.onend = () => micB.classList.remove('listening');
-            recB.onerror = () => micB.classList.remove('listening');
-        }
     </script>
 </body>
-    </html>
+                    </html>
