@@ -6,27 +6,39 @@
     <title>VoiceBridge AI</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        :root { --primary: #075e54; --bg: #efeae2; --text: #333; --card: #FFF; --personA: #FFFFFF; --personB: #DCF8C6; --nav-bg: #f0f0f0; }
+        :root { --primary: #075e54; --bg: #efeae2; --text: #333; --card: #FFF; --personA: #FFFFFF; --personB: #DCF8C6; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
         .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; height: 100vh; background: white; position: relative; overflow: hidden; }
         
-        /* --- HEADER --- */
+        /* --- AUTH SCREEN --- */
+        #authScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; height: 100%; background: white; }
+        .auth-logo { font-size: 60px; margin-bottom: 20px; }
+        .auth-title { font-size: 28px; color: var(--primary); margin-bottom: 30px; font-weight: bold; }
+        .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        .auth-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .auth-switch { margin-top: 20px; color: #007bff; cursor: pointer; font-size: 14px; }
+        .error-msg { color: red; font-size: 14px; margin-bottom: 10px; display: none; }
+
+        /* --- MAIN APP (Hidden until logged in) --- */
+        #mainApp { display: none; flex-direction: column; height: 100%; position: relative; }
+        
+        /* HEADER */
         .main-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--primary); color: white; z-index: 10; }
         .main-header h1 { font-size: 22px; font-weight: bold; }
         .header-icons { display: flex; gap: 20px; font-size: 20px; cursor: pointer; }
 
-        /* --- SEARCH --- */
+        /* SEARCH */
         .search-container { padding: 10px; background: white; }
         .search-box { display: flex; align-items: center; background: #f0f0f0; border-radius: 20px; padding: 8px 15px; }
         .search-box input { border: none; background: transparent; outline: none; flex: 1; font-size: 16px; margin-left: 10px; }
 
-        /* --- SCREENS --- */
+        /* SCREENS */
         .screen { display: none; flex: 1; flex-direction: column; overflow-y: auto; background: white; }
         .screen.active { display: flex; }
 
-        /* --- CHAT LIST ITEM --- */
-        .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
+        /* CHAT LIST ITEM */
+        .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .list-item:hover { background: #f9f9f9; }
         .avatar { width: 55px; height: 55px; background: #4A90E2; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-right: 15px; color: white; flex-shrink: 0; }
         .item-info { flex: 1; }
@@ -34,14 +46,14 @@
         .item-time { font-size: 12px; color: #888; font-weight: normal; margin-top: 3px; }
         .item-preview { font-size: 14px; color: #666; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
 
-        /* --- BOTTOM NAVIGATION --- */
+        /* BOTTOM NAVIGATION */
         .bottom-nav { display: flex; background: white; border-top: 1px solid #ddd; padding: 5px 0; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 0; color: #666; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
         .nav-icon { font-size: 24px; margin-bottom: 3px; }
         .nav-text { font-size: 12px; font-weight: bold; }
 
-        /* --- CHAT SCREEN --- */
+        /* CHAT SCREEN */
         #chatScreen { display: none; flex-direction: column; flex: 1; height: 100%; position: absolute; top: 0; left: 0; width: 100%; background: #efeae2; z-index: 20; }
         .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: var(--primary); color: white; z-index: 10; }
         .chat-header-left { display: flex; align-items: center; gap: 15px; }
@@ -64,7 +76,7 @@
         .checkmark { font-size: 14px; color: #999; }
         .checkmark.read { color: #34B7F1; }
 
-        /* --- INPUT AREA --- */
+        /* INPUT AREA */
         .bottom-bar { display: flex; background: #f0f0f0; padding: 10px; gap: 8px; align-items: flex-end; }
         .icon-btn { background: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-shrink: 0; }
         .input-wrapper { flex: 1; display: flex; background: #fff; border-radius: 20px; padding: 5px 10px; align-items: flex-end; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 45px; }
@@ -80,51 +92,63 @@
 
     <div class="app-container">
         
-        <!-- HOME SCREENS -->
-        <div id="homeContainer" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+        <!-- AUTH SCREEN (Login/Signup) -->
+        <div id="authScreen">
+            <div class="auth-logo">🌍</div>
+            <div class="auth-title">VoiceBridge AI</div>
+            <div id="authError" class="error-msg"></div>
+            <input type="email" id="emailInput" class="auth-input" placeholder="Email Address">
+            <input type="password" id="passwordInput" class="auth-input" placeholder="Password">
+            <button id="authBtn" class="auth-btn">Login</button>
+            <div id="switchAuth" class="auth-switch">Don't have an account? Sign Up</div>
+        </div>
+
+        <!-- MAIN APP (Hidden until logged in) -->
+        <div id="mainApp">
+            
             <div class="main-header">
                 <h1>VoiceBridge</h1>
                 <div class="header-icons">
-                    <span>📷</span>
-                    <span>⋮</span>
+                    <span onclick="logout()" title="Logout">🚪</span>
                 </div>
             </div>
             
-            <!-- CHATS TAB -->
-            <div id="chatsTab" class="screen active">
-                <div class="search-container">
-                    <div class="search-box">
-                        <span>🔍</span>
-                        <input type="text" placeholder="Search or start new chat">
+            <div id="homeContainer" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+                <!-- CHATS TAB -->
+                <div id="chatsTab" class="screen active">
+                    <div class="search-container">
+                        <div class="search-box">
+                            <span>🔍</span>
+                            <input type="text" placeholder="Search or start new chat">
+                        </div>
+                    </div>
+                    <div class="list-item" onclick="openChat()">
+                        <div class="avatar">🌍</div>
+                        <div class="item-info">
+                            <div class="item-name">Global Translator <span class="item-time" id="lastMessageTime">Now</span></div>
+                            <div class="item-preview" id="lastMessagePreview">Tap to start translating...</div>
+                        </div>
                     </div>
                 </div>
-                <div class="list-item" onclick="openChat()">
-                    <div class="avatar">🌍</div>
-                    <div class="item-info">
-                        <div class="item-name">Global Translator <span class="item-time" id="lastMessageTime">Now</span></div>
-                        <div class="item-preview" id="lastMessagePreview">Tap to start translating...</div>
+
+                <!-- CALLS TAB -->
+                <div id="callsTab" class="screen">
+                    <div style="padding: 20px; text-align: center; color: #888;">
+                        <h2>Call History</h2>
+                        <p style="margin-top: 10px;">Real calling requires a server. Coming soon!</p>
                     </div>
                 </div>
             </div>
 
-            <!-- CALLS TAB -->
-            <div id="callsTab" class="screen">
-                <div class="list-item">
-                    <div class="avatar" style="background:#e74c3c;">📞</div>
-                    <div class="item-info">
-                        <div class="item-name">Global Translator <span class="item-time">Today, 10:30 AM</span></div>
-                        <div class="item-preview" style="color: #e74c3c;">↙ Missed Voice Call</div>
-                    </div>
+            <!-- BOTTOM NAVIGATION -->
+            <div class="bottom-nav" id="mainNav">
+                <div class="nav-item active" id="navChats" onclick="switchTab('chats')">
+                    <div class="nav-icon">💬</div>
+                    <div class="nav-text">Chats</div>
                 </div>
-                <div class="list-item">
-                    <div class="avatar" style="background:#2ecc71;">📹</div>
-                    <div class="item-info">
-                        <div class="item-name">Bilal (Demo) <span class="item-time">Yesterday, 8:15 PM</span></div>
-                        <div class="item-preview">↗ Outgoing Video Call (5 mins)</div>
-                    </div>
-                </div>
-                <div style="padding: 20px; text-align: center; color: #888;">
-                    <p><em>Real calling requires a TURN server. (Coming Soon)</em></p>
+                <div class="nav-item" id="navCalls" onclick="switchTab('calls')">
+                    <div class="nav-icon">📞</div>
+                    <div class="nav-text">Calls</div>
                 </div>
             </div>
         </div>
@@ -174,28 +198,13 @@
                 <button class="send-btn" id="sendBtn">➤</button>
             </div>
         </div>
-
-        <!-- BOTTOM NAVIGATION -->
-        <div class="bottom-nav" id="mainNav">
-            <div class="nav-item active" id="navChats" onclick="switchTab('chats')">
-                <div class="nav-icon">💬</div>
-                <div class="nav-text">Chats</div>
-            </div>
-            <div class="nav-item" id="navCalls" onclick="switchTab('calls')">
-                <div class="nav-icon">📞</div>
-                <div class="nav-text">Calls</div>
-            </div>
-            <div class="nav-item" id="navGroups" onclick="switchTab('groups')">
-                <div class="nav-icon">👥</div>
-                <div class="nav-text">New Group</div>
-            </div>
-        </div>
     </div>
 
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDywymuYlmjORVyBVkyHPl-f6T7WMOi3t4",
@@ -208,11 +217,21 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
         // Elements
+        const authScreen = document.getElementById('authScreen');
+        const mainApp = document.getElementById('mainApp');
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const authBtn = document.getElementById('authBtn');
+        const switchAuth = document.getElementById('switchAuth');
+        const authError = document.getElementById('authError');
+
         const homeContainer = document.getElementById('homeContainer');
         const chatScreen = document.getElementById('chatScreen');
         const mainNav = document.getElementById('mainNav');
+        
         const micBtn = document.getElementById('micBtn');
         const langA = document.getElementById('langA');
         const langB = document.getElementById('langB');
@@ -221,6 +240,53 @@
         const sendBtn = document.getElementById('sendBtn');
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        // --- AUTHENTICATION LOGIC ---
+        let isLoginMode = true;
+
+        switchAuth.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            authBtn.innerText = isLoginMode ? "Login" : "Sign Up";
+            switchAuth.innerText = isLoginMode ? "Don't have an account? Sign Up" : "Already have an account? Login";
+            authError.style.display = 'none';
+        });
+
+        authBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            authError.style.display = 'none';
+
+            if (!email || !password) {
+                authError.innerText = "Please enter email and password.";
+                authError.style.display = 'block';
+                return;
+            }
+
+            try {
+                if (isLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                }
+            } catch (error) {
+                authError.innerText = error.message;
+                authError.style.display = 'block';
+            }
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authScreen.style.display = 'none';
+                mainApp.style.display = 'flex';
+            } else {
+                authScreen.style.display = 'flex';
+                mainApp.style.display = 'none';
+            }
+        });
+
+        window.logout = function() {
+            signOut(auth);
+        }
 
         // --- NAVIGATION ---
         window.openChat = function() {
@@ -240,7 +306,6 @@
             document.getElementById('callsTab').classList.remove('active');
             document.getElementById('navChats').classList.remove('active');
             document.getElementById('navCalls').classList.remove('active');
-            document.getElementById('navGroups').classList.remove('active');
 
             if (tab === 'chats') {
                 document.getElementById('chatsTab').classList.add('active');
@@ -248,22 +313,19 @@
             } else if (tab === 'calls') {
                 document.getElementById('callsTab').classList.add('active');
                 document.getElementById('navCalls').classList.add('active');
-            } else if (tab === 'groups') {
-                alert("Group Chat creation requires a user database. Coming in Phase 10!");
             }
         }
 
         window.startCall = function(type) {
-            alert(`Starting ${type} call with Global Translator...\n\nReal-time WebRTC calls require a paid TURN server (like Twilio or Agora). This UI is ready, but the backend needs to be connected.`);
+            alert(`Starting ${type} call... Real-time WebRTC requires a paid TURN server.`);
         }
 
-        // --- EXPANDING TEXT BOX ---
+        // --- CHAT LOGIC ---
         textInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // --- SPEECH ---
         function speakText(text, langCode) {
             window.speechSynthesis.cancel();
             if (!text) return;
