@@ -212,6 +212,12 @@
         const remoteVideoDiv = document.getElementById('remoteVideo');
 
         window.joinCall = async function(withVideo) {
+           try {
+    await navigator.mediaDevices.getUserMedia({ audio: true, video: withVideo });
+} catch (e) {
+    alert("Please allow camera and microphone access in Chrome settings.");
+    return;
+           }
             callScreen.style.display = 'flex';
             localVideoDiv.innerHTML = "Connecting...";
             remoteVideoDiv.innerHTML = "";
