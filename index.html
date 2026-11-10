@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VoiceBridge AI</title>
     <link rel="manifest" href="manifest.json">
-    <!-- Agora Web SDK -->
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
-    
     <style>
         :root { --primary: #075e54; --bg: #efeae2; --text: #333; --card: #FFF; --personA: #FFFFFF; --personB: #DCF8C6; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -76,7 +74,7 @@
         .mic-btn.listening { color: #ff4757; animation: pulse 1.5s infinite; }
         .send-btn { padding: 10px 15px; background: #00a884; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
 
-        /* --- LIVE CALL SCREEN OVERLAY --- */
+        /* --- CALL SCREEN --- */
         #callScreen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 999; flex-direction: column; justify-content: center; align-items: center; color: white; }
         .video-container { display: flex; flex-direction: column; width: 100%; height: 100%; position: relative; }
         #remoteVideo { width: 100%; height: 100%; object-fit: cover; background: black; }
@@ -92,11 +90,11 @@
 
     <div class="app-container">
         
-        <!-- LIVE CALL SCREEN -->
+        <!-- CALL SCREEN -->
         <div id="callScreen">
             <div class="video-container">
-                <div id="remoteVideo"></div> <!-- Agora injects remote video here -->
-                <div id="localVideo"></div>  <!-- Agora injects local video here -->
+                <div id="remoteVideo"></div>
+                <div id="localVideo"></div>
                 <div class="call-controls">
                     <button class="end-call-btn" onclick="leaveCall()">📞</button>
                 </div>
@@ -159,6 +157,7 @@
                     </div>
                 </div>
                 <div class="chat-header-icons">
+                    <!-- The buttons now call the function -->
                     <span title="Video Call" onclick="joinCall(true)">📹</span>
                     <span title="Voice Call" onclick="joinCall(false)">📞</span>
                     <span>⋮</span>
@@ -183,7 +182,6 @@
         </div>
     </div>
 
-    <!-- Firebase & Agora Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -212,29 +210,13 @@
         const remoteVideoDiv = document.getElementById('remoteVideo');
 
         window.joinCall = async function(withVideo) {
-           try {
-    await navigator.mediaDevices.getUserMedia({ audio: true, video: withVideo });
-} catch (e) {
-    alert("Please allow camera and microphone access in Chrome settings.");
-    return;
-           } 
-       const supported = AgoraRTC.checkSystemRequirements();
-if (!supported) {
-    alert("Your browser or device does not support Agora calling. Please update Chrome.");
-    return;
-}     
-        const supported = AgoraRTC.checkSystemRequirements();
-if (!supported) {
-    alert("Your browser or device does not support Agora calling. Please update Chrome.");
-    return;
-}    
             callScreen.style.display = 'flex';
             localVideoDiv.innerHTML = "Connecting...";
             remoteVideoDiv.innerHTML = "";
 
+            // Use VP8 codec (Best for mobile)
             rtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
-            // Listen for remote user joining
             rtcClient.on("user-published", async (user, mediaType) => {
                 await rtcClient.subscribe(user, mediaType);
                 if (mediaType === "video") {
@@ -247,24 +229,25 @@ if (!supported) {
             });
 
             try {
-                // Join a channel called "VoiceBridgeRoom"
+                // Join the channel
                 await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", null, null);
                 
+                // Create tracks
                 if (withVideo) {
                     localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
                     localTracks.videoTrack.play(localVideoDiv);
                 }
-                
                 localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
                 let tracksToPublish = [localTracks.audioTrack];
                 if (localTracks.videoTrack) tracksToPublish.push(localTracks.videoTrack);
 
+                // Publish
                 await rtcClient.publish(tracksToPublish);
                 
             } catch (error) {
                 console.error(error);
-                alert("Could not connect to call. Ensure microphone/camera permissions are allowed.");
+                alert("Could not connect to call. Please check your camera/mic permissions in Chrome.");
                 leaveCall();
             }
         }
@@ -273,16 +256,13 @@ if (!supported) {
             if (rtcClient) {
                 if (localTracks.audioTrack) { localTracks.audioTrack.stop(); localTracks.audioTrack.close(); }
                 if (localTracks.videoTrack) { localTracks.videoTrack.stop(); localTracks.videoTrack.close(); }
-                
                 await rtcClient.leave();
                 rtcClient = null;
             }
             callScreen.style.display = 'none';
         }
 
-        // ... (Rest of your Firebase Login and Chat code remains the same) ...
-        // [To save space here, the Firebase Login and Chat logic is the same as the previous step]
-        
+        // Auth and Chat Logic (Same as before)
         const authScreen = document.getElementById('authScreen');
         const mainApp = document.getElementById('mainApp');
         const emailInput = document.getElementById('emailInput');
@@ -368,4 +348,4 @@ if (!supported) {
         }
     </script>
 </body>
-    </html>
+                </html>
