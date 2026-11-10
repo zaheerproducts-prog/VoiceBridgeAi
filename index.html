@@ -217,7 +217,17 @@
 } catch (e) {
     alert("Please allow camera and microphone access in Chrome settings.");
     return;
-           }
+           } 
+       const supported = AgoraRTC.checkSystemRequirements();
+if (!supported) {
+    alert("Your browser or device does not support Agora calling. Please update Chrome.");
+    return;
+}     
+        const supported = AgoraRTC.checkSystemRequirements();
+if (!supported) {
+    alert("Your browser or device does not support Agora calling. Please update Chrome.");
+    return;
+}    
             callScreen.style.display = 'flex';
             localVideoDiv.innerHTML = "Connecting...";
             remoteVideoDiv.innerHTML = "";
