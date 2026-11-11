@@ -210,46 +210,53 @@
         const remoteVideoDiv = document.getElementById('remoteVideo');
 
         window.joinCall = async function(withVideo) {
-            callScreen.style.display = 'flex';
-            localVideoDiv.innerHTML = "Connecting...";
+    // 1. Ask Chrome for permission FIRST
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: withVideo });
+        // Stop the temporary stream so Agora can use the camera
+        stream.getTracks().forEach(track => track.stop());
+    } catch (e) {
+        alert("Camera/Microphone permission was denied. Please allow it in Chrome settings.");
+        return;
+    }
+
+    // 2. Now start the Agora call
+    callScreen.style.display = 'flex';
+    localVideoDiv.innerHTML = "Connecting...";
+    remoteVideoDiv.innerHTML = "";
+
+    rtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+
+    rtcClient.on("user-published", async (user, mediaType) => {
+        await rtcClient.subscribe(user, mediaType);
+        if (mediaType === "video") {
             remoteVideoDiv.innerHTML = "";
+            user.videoTrack.play(remoteVideoDiv);
+        }
+        if (mediaType === "audio") {
+            user.audioTrack.play();
+        }
+    });
 
-            // Use VP8 codec (Best for mobile)
-            rtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+    try {
+        await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", null, null);
+        
+        if (withVideo) {
+            localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+            localTracks.videoTrack.play(localVideoDiv);
+        }
+        localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
-            rtcClient.on("user-published", async (user, mediaType) => {
-                await rtcClient.subscribe(user, mediaType);
-                if (mediaType === "video") {
-                    remoteVideoDiv.innerHTML = "";
-                    user.videoTrack.play(remoteVideoDiv);
-                }
-                if (mediaType === "audio") {
-                    user.audioTrack.play();
-                }
-            });
+        let tracksToPublish = [localTracks.audioTrack];
+        if (localTracks.videoTrack) tracksToPublish.push(localTracks.videoTrack);
 
-            try {
-                // Join the channel
-                await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", null, null);
-                
-                // Create tracks
-                if (withVideo) {
-                    localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-                    localTracks.videoTrack.play(localVideoDiv);
-                }
-                localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-
-                let tracksToPublish = [localTracks.audioTrack];
-                if (localTracks.videoTrack) tracksToPublish.push(localTracks.videoTrack);
-
-                // Publish
-                await rtcClient.publish(tracksToPublish);
-                
-            } catch (error) {
-                console.error(error);
-                alert("Could not connect to call. Please check your camera/mic permissions in Chrome.");
-                leaveCall();
-            }
+        await rtcClient.publish(tracksToPublish);
+        
+    } catch (error) {
+        console.error(error);
+        alert("Agora could not connect. Error: " + error.message);
+        leaveCall();
+    }
         }
 
         window.leaveCall = async function() {
