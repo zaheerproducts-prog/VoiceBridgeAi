@@ -13,7 +13,7 @@
         .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; height: 100vh; background: white; position: relative; overflow: hidden; }
         
         /* --- AUTH SCREEN --- */
-        #authScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; height: 100%; background: white; }
+        #authScreen { display: flex; flex-direction: column; justify-content: flex-start; padding: 40px 30px; height: 100%; background: white; overflow-y: auto; }
         .auth-logo { font-size: 60px; margin-bottom: 20px; }
         .auth-title { font-size: 28px; color: var(--primary); margin-bottom: 30px; font-weight: bold; }
         .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
@@ -165,9 +165,36 @@
             </div>
 
             <div class="lang-bar">
-                <select id="langA"><option value="ur-PK">Urdu</option><option value="en-US">English</option></select>
-                <span>⇄</span>
-                <select id="langB"><option value="en-US">English</option><option value="ur-PK">Urdu</option></select>
+              <select id="langA">
+    <option value="ur-PK">Urdu</option>
+    <option value="en-US">English</option>
+    <option value="ar-SA">Arabic</option>
+    <option value="es-ES">Spanish</option>
+    <option value="fr-FR">French</option>
+    <option value="zh-CN">Chinese</option>
+    <option value="ja-JP">Japanese</option>
+    <option value="hi-IN">Hindi</option>
+    <option value="bn-IN">Bengali</option>
+    <option value="ru-RU">Russian</option>
+    <option value="pt-BR">Portuguese</option>
+    <option value="de-DE">German</option>
+    <option value="id-ID">Indonesian</option>
+    <option value="tr-TR">Turkish</option>
+    <option value="ur-PK">Urdu</option>
+    <option value="en-US">English</option>
+    <option value="ar-SA">Arabic</option>
+    <option value="es-ES">Spanish</option>
+    <option value="fr-FR">French</option>
+    <option value="zh-CN">Chinese</option>
+    <option value="ja-JP">Japanese</option>
+    <option value="hi-IN">Hindi</option>
+    <option value="bn-IN">Bengali</option>
+    <option value="ru-RU">Russian</option>
+    <option value="pt-BR">Portuguese</option>
+    <option value="de-DE">German</option>
+    <option value="id-ID">Indonesian</option>
+    <option value="tr-TR">Turkish</option>
+</select>
             </div>
 
             <div class="chat-container" id="chatContainer"></div>
@@ -202,6 +229,7 @@
 
         // AGORA SETUP
         const AGORA_APP_ID = "f12901bdf46f4113b38294f26f518c15"; 
+        const AGORA_TEMP_TOKEN = "007eJxTYJg0+bL7S6OSzzryH9bZn+0Le/iVxTI34o6FWev+c46ct+0UGMwsjU0M0iySU9LMTU2SEpMtTNMSkyzNjAyTTM0sjUyMC43/ZTUEMjKEWS5jZGJgBEMQn58hLD8zOdWpKDMlPTUoPz+XgYEJLsnCYGhgYAgASGIlhg==";
         let rtcClient = null;
         let localTracks = { videoTrack: null, audioTrack: null };
 
@@ -239,7 +267,7 @@
     });
 
     try {
-        await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", null, null);
+        await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", AGORA_TEMP_TOKEN, null);
         
         if (withVideo) {
             localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
