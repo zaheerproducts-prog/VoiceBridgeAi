@@ -7,84 +7,103 @@
     <link rel="manifest" href="manifest.json">
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
     <style>
-        :root { --primary: #075e54; --bg: #efeae2; --text: #333; --card: #FFF; --personA: #FFFFFF; --personB: #DCF8C6; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
-        .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; height: 100vh; background: white; position: relative; overflow: hidden; }
-        
-        /* --- AUTH SCREEN --- */
-        #authScreen { display: flex; flex-direction: column; justify-content: flex-start; padding: 40px 30px; height: 100%; background: white; overflow-y: auto; }
-        .auth-logo { font-size: 60px; margin-bottom: 20px; }
-        .auth-title { font-size: 28px; color: var(--primary); margin-bottom: 30px; font-weight: bold; }
-        .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
-        .auth-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .auth-switch { margin-top: 20px; color: #007bff; cursor: pointer; font-size: 14px; }
-        .error-msg { color: red; font-size: 14px; margin-bottom: 10px; display: none; }
+    :root { 
+        --primary: #075e54; 
+        --primary-light: #128c7e;
+        --bg: #efeae2; 
+        --text: #333; 
+        --card: #FFF; 
+        --personA: #FFFFFF; 
+        --personB: #DCF8C6; 
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
+    
+    .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; height: 100vh; background: #efeae2; position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+    
+    /* --- AUTH SCREEN --- */
+    #authScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; height: 100%; background: white; }
+    .auth-logo { font-size: 70px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+    .auth-title { font-size: 28px; color: var(--primary); margin-bottom: 30px; font-weight: 800; letter-spacing: 1px; }
+    .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; outline: none; transition: 0.3s; background: #f9f9f9; }
+    .auth-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 5px rgba(7, 94, 84, 0.2); }
+    .auth-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+    .auth-btn:active { transform: scale(0.98); background: var(--primary-light); }
+    .auth-switch { margin-top: 20px; color: #007bff; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .error-msg { color: #ff4757; font-size: 14px; margin-bottom: 10px; display: none; background: #ffe0e3; padding: 10px; border-radius: 8px; width: 100%; text-align: center; }
 
-        /* --- MAIN APP --- */
-        #mainApp { display: none; flex-direction: column; height: 100%; position: relative; }
-        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--primary); color: white; z-index: 10; }
-        .main-header h1 { font-size: 22px; font-weight: bold; }
-        
-        .search-container { padding: 10px; background: white; }
-        .search-box { display: flex; align-items: center; background: #f0f0f0; border-radius: 20px; padding: 8px 15px; }
-        .search-box input { border: none; background: transparent; outline: none; flex: 1; font-size: 16px; margin-left: 10px; }
+    /* --- MAIN APP HEADER --- */
+    #mainApp { display: none; flex-direction: column; height: 100%; position: relative; }
+    .main-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--primary); color: white; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .main-header h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+    
+    .search-container { padding: 10px; background: white; }
+    .search-box { display: flex; align-items: center; background: #f0f0f0; border-radius: 20px; padding: 10px 15px; }
+    .search-box input { border: none; background: transparent; outline: none; flex: 1; font-size: 16px; margin-left: 10px; }
 
-        .screen { display: none; flex: 1; flex-direction: column; overflow-y: auto; background: white; }
-        .screen.active { display: flex; }
+    .screen { display: none; flex: 1; flex-direction: column; overflow-y: auto; background: white; }
+    .screen.active { display: flex; }
 
-        .list-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; }
-        .avatar { width: 55px; height: 55px; background: #4A90E2; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-right: 15px; color: white; flex-shrink: 0; }
-        .item-info { flex: 1; }
-        .item-name { font-weight: bold; font-size: 17px; color: #000; display: flex; justify-content: space-between; }
-        .item-preview { font-size: 14px; color: #666; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
+    .list-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: 0.2s; }
+    .list-item:active { background: #f5f5f5; }
+    .avatar { width: 55px; height: 55px; background: linear-gradient(135deg, #4A90E2, #0056b3); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-right: 15px; color: white; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .item-info { flex: 1; }
+    .item-name { font-weight: bold; font-size: 17px; color: #000; display: flex; justify-content: space-between; align-items: center; }
+    .item-time { font-size: 12px; color: #888; font-weight: normal; }
+    .item-preview { font-size: 14px; color: #666; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
 
-        .bottom-nav { display: flex; background: white; border-top: 1px solid #ddd; padding: 5px 0; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 0; color: #666; cursor: pointer; }
-        .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 24px; margin-bottom: 3px; }
-        .nav-text { font-size: 12px; font-weight: bold; }
+    .bottom-nav { display: flex; background: white; border-top: 1px solid #ddd; padding-bottom: 5px; }
+    .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; color: #888; cursor: pointer; transition: 0.2s; }
+    .nav-item.active { color: var(--primary); font-weight: bold; }
+    .nav-icon { font-size: 24px; margin-bottom: 4px; }
+    .nav-text { font-size: 12px; }
 
-        /* --- CHAT SCREEN --- */
-        #chatScreen { display: none; flex-direction: column; flex: 1; height: 100%; position: absolute; top: 0; left: 0; width: 100%; background: #efeae2; z-index: 20; }
-        .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: var(--primary); color: white; z-index: 10; }
-        .chat-header-left { display: flex; align-items: center; gap: 15px; }
-        .chat-header-left span { font-size: 24px; cursor: pointer; }
-        .chat-header-avatar { width: 40px; height: 40px; background: #4A90E2; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; }
-        .chat-header-icons { display: flex; gap: 20px; font-size: 20px; cursor: pointer; }
+    /* --- CHAT SCREEN --- */
+    #chatScreen { display: none; flex-direction: column; flex: 1; height: 100%; position: absolute; top: 0; left: 0; width: 100%; background: #efeae2; z-index: 20; }
+    .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: var(--primary); color: white; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .chat-header-left { display: flex; align-items: center; gap: 10px; }
+    .chat-header-left span { font-size: 24px; cursor: pointer; padding-right: 5px; }
+    .chat-header-avatar { width: 40px; height: 40px; background: #4A90E2; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; color: white; }
+    .chat-header-name { font-weight: bold; font-size: 16px; }
+    .chat-header-status { font-size: 12px; color: #d1e3f8; }
+    .chat-header-icons { display: flex; gap: 20px; font-size: 20px; cursor: pointer; }
 
-        .lang-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; background: #f0f0f0; border-bottom: 1px solid #ddd; }
-        select { padding: 8px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; background: white; width: 42%; }
+    .lang-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #f0f0f0; border-bottom: 1px solid #ddd; }
+    select { padding: 8px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; background: white; width: 42%; outline: none; }
 
-        .chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: cover; }
-        .message { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 16px; line-height: 1.4; word-wrap: break-word; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); position: relative; }
-        .message .original { font-size: 12px; color: #666; font-style: italic; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 5px; }
-        .message .translated { font-size: 16px; font-weight: 500; }
-        .msg-a { align-self: flex-start; background: var(--personA); border-top-left-radius: 0; }
-        .msg-b { align-self: flex-end; background: var(--personB); border-top-right-radius: 0; }
-        .msg-meta { display: flex; justify-content: flex-end; align-items: center; gap: 3px; font-size: 11px; color: #999; margin-top: 4px; }
-        .checkmark { font-size: 14px; color: #999; }
-        .checkmark.read { color: #34B7F1; }
+    .chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: cover; }
+    
+    .message { max-width: 85%; padding: 8px 12px; border-radius: 8px; font-size: 15px; line-height: 1.4; word-wrap: break-word; display: flex; flex-direction: column; gap: 5px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+    .message .original { font-size: 13px; color: #666; font-style: italic; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 5px; margin-bottom: 5px; }
+    .message .translated { font-size: 16px; font-weight: 500; }
+    
+    .msg-a { align-self: flex-start; background: var(--personA); border-top-left-radius: 0; }
+    .msg-b { align-self: flex-end; background: var(--personB); border-top-right-radius: 0; }
+    
+    .msg-meta { display: flex; justify-content: flex-end; align-items: center; gap: 3px; font-size: 11px; color: #999; margin-top: 4px; }
+    .checkmark { font-size: 14px; color: #999; }
+    .checkmark.read { color: #34B7F1; }
 
-        .bottom-bar { display: flex; background: #f0f0f0; padding: 10px; gap: 8px; align-items: flex-end; }
-        .icon-btn { background: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-shrink: 0; }
-        .input-wrapper { flex: 1; display: flex; background: #fff; border-radius: 20px; padding: 5px 10px; align-items: flex-end; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 45px; }
-        .input-wrapper textarea { flex: 1; border: none; font-size: 16px; outline: none; padding: 8px; background: transparent; resize: none; max-height: 100px; overflow-y: auto; font-family: inherit; line-height: 1.4; }
-        .mic-btn { background: none; border: none; font-size: 22px; color: #666; cursor: pointer; padding: 8px; flex-shrink: 0; }
-        .mic-btn.listening { color: #ff4757; animation: pulse 1.5s infinite; }
-        .send-btn { padding: 10px 15px; background: #00a884; color: white; border: none; border-radius: 50%; width: 45px; height: 45px; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+    .bottom-bar { display: flex; background: #f0f0f0; padding: 10px; gap: 8px; align-items: flex-end; }
+    .icon-btn { background: #fff; border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 22px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex-shrink: 0; }
+    .input-wrapper { flex: 1; display: flex; background: #fff; border-radius: 25px; padding: 5px 15px; align-items: flex-end; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-height: 45px; }
+    .input-wrapper textarea { flex: 1; border: none; font-size: 16px; outline: none; padding: 10px 0; background: transparent; resize: none; max-height: 100px; font-family: inherit; line-height: 1.4; }
+    .mic-btn { background: none; border: none; font-size: 24px; color: #666; cursor: pointer; padding: 8px; flex-shrink: 0; }
+    .mic-btn.listening { color: #ff4757; animation: pulse 1.5s infinite; }
+    .send-btn { padding: 10px 15px; background: #00a884; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-weight: bold; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,168,132,0.3); transition: 0.2s; }
+    .send-btn:active { transform: scale(0.95); }
+    
+    .call-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 999; flex-direction: column; justify-content: center; align-items: center; color: white; }
+    .call-container { width: 100%; height: 100%; position: relative; }
+    #remoteVideo { width: 100%; height: 100%; object-fit: cover; background: black; }
+    #localVideo { position: absolute; bottom: 120px; right: 20px; width: 100px; height: 150px; border-radius: 12px; border: 2px solid white; object-fit: cover; background: #333; z-index: 10; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+    .call-controls { position: absolute; bottom: 40px; width: 100%; display: flex; justify-content: center; gap: 40px; }
+    .end-call-btn { background: #ff4757; color: white; border: none; border-radius: 50%; width: 65px; height: 65px; font-size: 28px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(255,71,87,0.5); transition: 0.2s; }
+    .end-call-btn:active { transform: scale(0.9); }
 
-        /* --- CALL SCREEN --- */
-        #callScreen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 999; flex-direction: column; justify-content: center; align-items: center; color: white; }
-        .video-container { display: flex; flex-direction: column; width: 100%; height: 100%; position: relative; }
-        #remoteVideo { width: 100%; height: 100%; object-fit: cover; background: black; }
-        #localVideo { position: absolute; bottom: 100px; right: 20px; width: 100px; height: 150px; border-radius: 10px; border: 2px solid white; object-fit: cover; background: #333; z-index: 10; }
-        
-        .call-controls { position: absolute; bottom: 30px; width: 100%; display: flex; justify-content: center; gap: 30px; }
-        .end-call-btn { background: #ff4757; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(255,71,87,0.4); }
-
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
-    </style>
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
+</style>
 </head>
 <body>
 
@@ -229,7 +248,7 @@
 
         // AGORA SETUP
         const AGORA_APP_ID = "f12901bdf46f4113b38294f26f518c15"; 
-        const AGORA_TEMP_TOKEN = "007eJxTYJg0+bL7S6OSzzryH9bZn+0Le/iVxTI34o6FWev+c46ct+0UGMwsjU0M0iySU9LMTU2SEpMtTNMSkyzNjAyTTM0sjUyMC43/ZTUEMjKEWS5jZGJgBEMQn58hLD8zOdWpKDMlPTUoPz+XgYEJLsnCYGhgYAgASGIlhg==";
+        
         let rtcClient = null;
         let localTracks = { videoTrack: null, audioTrack: null };
 
@@ -267,7 +286,16 @@
     });
 
     try {
-        await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", AGORA_TEMP_TOKEN, null);
+        // Generate a random UID for this session
+const uid = 0; 
+const tokenResponse = await fetch(`http://localhost:3001/token?channel=VoiceBridgeRoom&uid=${uid}`);
+const tokenData = await tokenResponse.json();
+await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", tokenData.token, uid);
+
+
+
+
+
         
         if (withVideo) {
             localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
