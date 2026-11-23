@@ -290,23 +290,21 @@
 const uid = 0; 
 const tokenResponse = await fetch(`https://voice-bridge-ai-zeta.vercel.app/token?channel=VoiceBridgeRoom&uid=${uid}`);
 const tokenData = await tokenResponse.json();
+
+// Join the channel first
 await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", tokenData.token, uid);
 
+// Only after joining, create and publish tracks
+if (withVideo) {
+    localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+    localTracks.videoTrack.play(localVideoDiv);
+}
+localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
+let tracksToPublish = [localTracks.audioTrack];
+if (localTracks.videoTrack) tracksToPublish.push(localTracks.videoTrack);
 
-
-
-        
-        if (withVideo) {
-            localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-            localTracks.videoTrack.play(localVideoDiv);
-        }
-        localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-
-        let tracksToPublish = [localTracks.audioTrack];
-        if (localTracks.videoTrack) tracksToPublish.push(localTracks.videoTrack);
-
-        await rtcClient.publish(tracksToPublish);
+await rtcClient.publish(tracksToPublish);
         
     } catch (error) {
         console.error(error);
