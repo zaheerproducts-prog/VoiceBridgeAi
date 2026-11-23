@@ -288,7 +288,7 @@
     try {
         // Generate a random UID for this session
 const uid = 0; 
-const tokenResponse = await fetch(`http://localhost:3001/token?channel=VoiceBridgeRoom&uid=${uid}`);
+const tokenResponse = await fetch(https://voice-bridge-ai-zeta.vercel.app/token?channel=VoiceBridgeRoom&uid=${uid});
 const tokenData = await tokenResponse.json();
 await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", tokenData.token, uid);
 
