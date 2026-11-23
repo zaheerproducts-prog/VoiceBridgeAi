@@ -33,6 +33,5 @@ app.get('/token', (req, res) => {
     res.json({ token: token });
 });
 
-app.listen(const port = process.env.PORT || 3001;, () => {
-    console.log(`Token server running at http://localhost:${port}`);
-});
+module.exports = app;
+
