@@ -269,7 +269,7 @@
 
     // 2. Now start the Agora call
     callScreen.style.display = 'flex';
-    localVideoDiv.innerHTML = "Connecting...";
+    
     remoteVideoDiv.innerHTML = "";
 
     rtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
