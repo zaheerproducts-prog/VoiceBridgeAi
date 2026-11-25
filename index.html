@@ -297,7 +297,8 @@ await rtcClient.join(AGORA_APP_ID, "VoiceBridgeRoom", tokenData.token, uid);
 // Only after joining, create and publish tracks
 if (withVideo) {
     localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-    localTracks.videoTrack.play(localVideoDiv);
+    localTracks.videoTrack.play(localVideoDiv); 
+    localVideoDiv.style.display = 'block';
 }
 localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
 
@@ -320,7 +321,9 @@ await rtcClient.publish(tracksToPublish);
                 await rtcClient.leave();
                 rtcClient = null;
             }
-            callScreen.style.display = 'none';
+           callScreen.style.display = 'none';
+localVideoDiv.innerHTML = ""; // Clear the local video
+remoteVideoDiv.innerHTML = ""; // Clear the remote video
         }
 
         // Auth and Chat Logic (Same as before)
