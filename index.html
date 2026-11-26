@@ -435,6 +435,34 @@ remoteVideoDiv.innerHTML = ""; // Clear the remote video
     sendMessageToDB('A', transcript, translatedText); 
     if (translatedText) speakText(translatedText, langB.value);
 }
+    // --- TEXT INPUT AND MICROPHONE LOGIC ---
+sendBtn.addEventListener('click', () => { 
+    const t = textInput.value.trim(); 
+    if (!t) return; 
+    processTranslation(t); 
+    textInput.value = ''; 
+    textInput.style.height = 'auto'; 
+});
+
+if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+    const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)(); 
+    rec.continuous = false; 
+    rec.interimResults = false;
+    
+    micBtn.addEventListener('click', () => { 
+        rec.lang = langA.value; 
+        try { 
+            rec.start(); 
+            micBtn.classList.add('listening'); 
+        } catch(e) {} 
+    });
+    
+    rec.onresult = (event) => {
+        processTranslation(event.results[0][0].transcript);
+    };
+    rec.onend = () => micBtn.classList.remove('listening'); 
+    rec.onerror = () => micBtn.classList.remove('listening');
+}
     </script>
 </body>
                 </html>
