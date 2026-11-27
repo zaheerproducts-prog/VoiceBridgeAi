@@ -43,7 +43,7 @@
     .error-msg { color: #ff4757; font-size: 14px; margin-bottom: 10px; display: none; background: rgba(255, 71, 87, 0.1); border: 1px solid rgba(255, 71, 87, 0.3); padding: 12px; border-radius: 8px; width: 100%; text-align: center; }
 
     /* --- MAIN APP HEADER --- */
-   #mainApp { display: none; flex-direction: column; flex: 1; height: 100%; position: relative; background: var(--bg-gradient); overflow: hidden; }
+  #mainApp { display: none; flex-direction: column; flex: 1; height: 100vh; position: relative; background: var(--bg-gradient); overflow: hidden; }
     .main-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 15px; background: transparent; border-bottom: 1px solid var(--glass-border); z-index: 10; }
     .main-header h1 { font-size: 24px; font-weight: 800; letter-spacing: 0.5px; color: var(--primary); }
     .header-icons span { font-size: 22px; cursor: pointer; filter: drop-shadow(0 0 5px var(--primary-glow)); }
@@ -67,7 +67,7 @@
     .nav-text { font-size: 12px; }
 
     /* --- CHAT SCREEN --- */
-    #chatScreen { display: none; flex-direction: column; flex: 1; width: 100%; background: var(--bg-gradient); z-index: 20; overflow: hidden; }
+    #chatScreen { display: none; flex-direction: column; flex: 1; height: 100%; width: 100%; background: var(--bg-gradient); z-index: 20; overflow: hidden; }
     .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(10, 15, 28, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); z-index: 10; }
     .chat-header-left { display: flex; align-items: center; gap: 10px; }
     .chat-header-left span { font-size: 24px; cursor: pointer; padding-right: 5px; color: var(--primary); }
@@ -188,7 +188,7 @@
                 </div>
             </div>
             
-            <div id="homeContainer">
+            <div id="homeContainer" style="display: flex; flex-direction: column; flex: 1; width: 100%;">
                 <div id="chatsTab" class="screen active">
                     <div class="list-item" onclick="openChat()">
                         <div class="avatar">🌍</div>
