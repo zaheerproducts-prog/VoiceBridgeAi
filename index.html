@@ -80,7 +80,7 @@
     select { padding: 8px; border: 1px solid var(--glass-border); border-radius: 8px; font-size: 14px; background: rgba(0,0,0,0.3); color: white; width: 42%; outline: none; }
     select option { background: var(--bg-dark); color: white; }
 
-    .chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .chat-container { flex: 1; min-height: 0; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
     
     .message { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 15px; line-height: 1.4; word-wrap: break-word; display: flex; flex-direction: column; gap: 5px; position: relative; backdrop-filter: blur(5px); }
     .message .original { font-size: 12px; color: var(--text-muted); font-style: italic; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; margin-bottom: 5px; }
@@ -135,21 +135,34 @@
 
         <!-- AUTH SCREEN -->
         <div id="authScreen">
-            <div class="auth-logo" style="display: flex; justify-content: center; margin-bottom: 20px;">
-    <svg width="120" height="120" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- Bridge Arch -->
-        <path d="M 20 70 Q 50 20 80 70" stroke="#00d2ff" stroke-width="6" fill="none" stroke-linecap="round"/>
-        <!-- Left Pillar -->
-        <line x1="20" y1="70" x2="20" y2="85" stroke="#00d2ff" stroke-width="6" stroke-linecap="round"/>
-        <!-- Right Pillar -->
-        <line x1="80" y1="70" x2="80" y2="85" stroke="#00d2ff" stroke-width="6" stroke-linecap="round"/>
-        <!-- Microphone Body -->
-        <rect x="40" y="45" width="20" height="35" rx="10" fill="url(#grad1)"/>
-        <!-- Microphone Grill Lines -->
-        <line x1="45" y1="55" x2="55" y2="55" stroke="#0a0f1c" stroke-width="2" stroke-linecap="round"/>
-        <line x1="45" y1="65" x2="55" y2="65" stroke="#0a0f1c" stroke-width="2" stroke-linecap="round"/>
-        <!-- Microphone Stand -->
-        <line x1="50" y1="80" x2="50" y2="90" stroke="#3a7bd5" stroke-width="4" stroke-linecap="round"/>
+            <div class="auth-logo" style="display: flex; justify-content: center; margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.4));">
+    <svg width="140" height="120" viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Left Face (Person A) -->
+        <circle cx="30" cy="60" r="15" fill="rgba(58, 123, 213, 0.2)" stroke="#3a7bd5" stroke-width="2"/>
+        <circle cx="25" cy="55" r="2" fill="#00d2ff"/>
+        <circle cx="35" cy="55" r="2" fill="#00d2ff"/>
+        <path d="M 25 65 Q 30 70 35 65" stroke="#00d2ff" stroke-width="2" fill="none" stroke-linecap="round"/>
+        
+        <!-- Right Face (Person B) -->
+        <circle cx="110" cy="60" r="15" fill="rgba(0, 210, 255, 0.2)" stroke="#00d2ff" stroke-width="2"/>
+        <circle cx="105" cy="55" r="2" fill="#3a7bd5"/>
+        <circle cx="115" cy="55" r="2" fill="#3a7bd5"/>
+        <path d="M 105 65 Q 110 70 115 65" stroke="#3a7bd5" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <!-- Sound Waves Left -->
+        <path d="M 50 60 Q 55 50 55 60 Q 55 70 50 60" stroke="#00d2ff" stroke-width="2" fill="none" opacity="0.6"/>
+        <path d="M 58 60 Q 63 45 63 60 Q 63 75 58 60" stroke="#00d2ff" stroke-width="2" fill="none" opacity="0.4"/>
+
+        <!-- Sound Waves Right -->
+        <path d="M 90 60 Q 85 50 85 60 Q 85 70 90 60" stroke="#3a7bd5" stroke-width="2" fill="none" opacity="0.6"/>
+        <path d="M 82 60 Q 77 45 77 60 Q 77 75 82 60" stroke="#3a7bd5" stroke-width="2" fill="none" opacity="0.4"/>
+
+        <!-- Center Microphone -->
+        <rect x="60" y="45" width="20" height="35" rx="10" fill="url(#grad1)" filter="drop-shadow(0 0 8px #00d2ff)"/>
+        <line x1="65" y1="55" x2="75" y2="55" stroke="#0a0f1c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="65" y1="65" x2="75" y2="65" stroke="#0a0f1c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="70" y1="80" x2="70" y2="90" stroke="#00d2ff" stroke-width="4" stroke-linecap="round"/>
+        
         <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" style="stop-color:#00d2ff;stop-opacity:1" />
