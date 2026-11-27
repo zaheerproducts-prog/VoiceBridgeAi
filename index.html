@@ -24,7 +24,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
     body { background: var(--bg-gradient); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
     
-    .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; height: 100vh; background: transparent; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+     .app-container { width: 100%; max-width: 480px; display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; background: transparent; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
     
     /* --- AUTH SCREEN --- */
     #authScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; height: 100%; background: var(--bg-gradient); z-index: 50; }
@@ -67,7 +67,7 @@
     .nav-text { font-size: 12px; }
 
     /* --- CHAT SCREEN --- */
-    #chatScreen { display: none; flex-direction: column; flex: 1; height: 100%; position: absolute; top: 0; left: 0; width: 100%; background: var(--bg-gradient); z-index: 20; }
+    #chatScreen { display: none; flex-direction: column; flex: 1; height: 100%; position: absolute; top: 0; left: 0; width: 100%; background: var(--bg-gradient); z-index: 20; overflow: hidden; }
     .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(10, 15, 28, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); z-index: 10; }
     .chat-header-left { display: flex; align-items: center; gap: 10px; }
     .chat-header-left span { font-size: 24px; cursor: pointer; padding-right: 5px; color: var(--primary); }
@@ -135,7 +135,29 @@
 
         <!-- AUTH SCREEN -->
         <div id="authScreen">
-            <div class="auth-logo">🌍</div>
+            <div class="auth-logo" style="display: flex; justify-content: center; margin-bottom: 20px;">
+    <svg width="120" height="120" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Bridge Arch -->
+        <path d="M 20 70 Q 50 20 80 70" stroke="#00d2ff" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <!-- Left Pillar -->
+        <line x1="20" y1="70" x2="20" y2="85" stroke="#00d2ff" stroke-width="6" stroke-linecap="round"/>
+        <!-- Right Pillar -->
+        <line x1="80" y1="70" x2="80" y2="85" stroke="#00d2ff" stroke-width="6" stroke-linecap="round"/>
+        <!-- Microphone Body -->
+        <rect x="40" y="45" width="20" height="35" rx="10" fill="url(#grad1)"/>
+        <!-- Microphone Grill Lines -->
+        <line x1="45" y1="55" x2="55" y2="55" stroke="#0a0f1c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="45" y1="65" x2="55" y2="65" stroke="#0a0f1c" stroke-width="2" stroke-linecap="round"/>
+        <!-- Microphone Stand -->
+        <line x1="50" y1="80" x2="50" y2="90" stroke="#3a7bd5" stroke-width="4" stroke-linecap="round"/>
+        <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00d2ff;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#3a7bd5;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+    </svg>
+</div>
             <div class="auth-title">VoiceBridge AI</div>
             <div id="authError" class="error-msg"></div>
             <input type="email" id="emailInput" class="auth-input" placeholder="Email Address">
