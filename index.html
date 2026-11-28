@@ -66,45 +66,71 @@
     .nav-icon { font-size: 24px; margin-bottom: 4px; }
     .nav-text { font-size: 12px; }
 
-    /* --- CHAT SCREEN --- */
-    #chatScreen { display: none; flex-direction: column; position: absolute; top: 0; left: 0; width: 100%; height: 100dvh; background: var(--bg-gradient); z-index: 999; overflow: hidden; }
-    .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(10, 15, 28, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); z-index: 10; position: relative; }
-    .chat-header-left { display: flex; align-items: center; gap: 10px; }
-    .chat-header-left span { font-size: 24px; cursor: pointer; padding-right: 5px; color: var(--primary); }
-    .chat-header-avatar { width: 40px; height: 40px; background: #1a2a40; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; color: var(--primary); border: 1px solid var(--primary); }
-    .chat-header-name { font-weight: bold; font-size: 16px; color: white; }
-    .chat-header-status { font-size: 12px; color: var(--primary); }
-    .chat-header-icons { display: flex; gap: 20px; font-size: 20px; cursor: pointer; color: var(--primary); }
+    /* ========== CHAT SCREEN - FIXED HEADER FIX ========== */
+#chatScreen {
+    display: none;
+    flex-direction: column;
+    position: fixed; /* Locks the screen */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh; /* Fixes mobile keyboard height */
+    background: var(--bg-gradient);
+    z-index: 999;
+    overflow: hidden;
+}
 
-    .lang-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: var(--glass-bg); border-bottom: 1px solid var(--glass-border); }
-    select { padding: 8px; border: 1px solid var(--glass-border); border-radius: 8px; font-size: 14px; background: rgba(0,0,0,0.3); color: white; width: 42%; outline: none; }
-    select option { background: var(--bg-dark); color: white; }
+/* Header stays locked at the top */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(10, 15, 28, 0.8);
+    backdrop-filter: blur(10px);
+    color: white;
+    z-index: 30;
+    flex-shrink: 0; /* Prevents it from shrinking */
+    border-bottom: 1px solid var(--glass-border);
+}
 
-   .chat-container { flex: 1; min-height: 0; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-    
-    .message { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 15px; line-height: 1.4; word-wrap: break-word; display: flex; flex-direction: column; gap: 5px; position: relative; backdrop-filter: blur(5px); }
-    .message .original { font-size: 12px; color: var(--text-muted); font-style: italic; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px; margin-bottom: 5px; }
-    .message .translated { font-size: 16px; font-weight: 500; color: white; }
-    
-    .msg-a { align-self: flex-start; background: var(--personA); border: 1px solid var(--glass-border); border-top-left-radius: 2px; }
-    .msg-b { align-self: flex-end; background: var(--personB); border-top-right-radius: 2px; box-shadow: 0 4px 15px var(--primary-glow); }
-    .msg-b .original { color: rgba(255,255,255,0.7); }
-    .msg-b .translated { color: white; }
-    
-    .msg-meta { display: flex; justify-content: flex-end; align-items: center; gap: 3px; font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-    .msg-b .msg-meta { color: rgba(255,255,255,0.8); }
-    .checkmark { font-size: 14px; color: var(--text-muted); }
-    .checkmark.read { color: #00d2ff; }
+/* Language bar also stays under header */
+.lang-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--glass-border);
+    flex-shrink: 0; /* Prevents it from shrinking */
+    z-index: 20;
+}
 
-    /* --- INPUT AREA --- */
-    .bottom-bar { display: flex; background: rgba(10, 15, 28, 0.9); backdrop-filter: blur(10px); padding: 10px; gap: 8px; align-items: flex-end; border-top: 1px solid var(--glass-border); }
-    .input-wrapper { flex: 1; display: flex; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 25px; padding: 5px 15px; align-items: flex-end; min-height: 45px; }
-    .input-wrapper textarea { flex: 1; border: none; font-size: 16px; outline: none; padding: 10px 0; background: transparent; resize: none; max-height: 100px; font-family: inherit; line-height: 1.4; color: white; }
-    .input-wrapper textarea::placeholder { color: var(--text-muted); }
-    .mic-btn { background: none; border: none; font-size: 24px; color: var(--primary); cursor: pointer; padding: 8px; flex-shrink: 0; filter: drop-shadow(0 0 5px var(--primary-glow)); }
-    .mic-btn.listening { color: #ff4757; animation: pulse 1.5s infinite; }
-    .send-btn { padding: 10px 15px; background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-weight: bold; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; box-shadow: 0 4px 15px var(--primary-glow); transition: 0.2s; }
-    .send-btn:active { transform: scale(0.95); }
+/* Messages area takes remaining space and scrolls */
+.chat-container {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Input bar stays at the bottom */
+.bottom-bar {
+    display: flex;
+    background: rgba(10, 15, 28, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 10px;
+    gap: 8px;
+    align-items: flex-end;
+    flex-shrink: 0; /* Prevents it from shrinking */
+    border-top: 1px solid var(--glass-border);
+    z-index: 30;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
     
     /* Call Screen */
     #call-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 999; flex-direction: column; justify-content: center; align-items: center; color: white; }
