@@ -30,7 +30,7 @@
     #authScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; height: 100%; background: var(--bg-gradient); z-index: 50; }
     .auth-logo { font-size: 80px; margin-bottom: 20px; filter: drop-shadow(0 0 15px var(--primary-glow)); animation: float 4s ease-in-out infinite; }
     @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-    .auth-title { font-size: 32px; background: linear-gradient(to right, #00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; font-weight: 900; letter-spacing: 1px; }
+    .auth-title { font-size: 32px; background: linear-gradient(to right, #00d2ff, #3a7bd5); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 30px; font-weight: 900; letter-spacing: 1px; }
     
     /* Glassmorphism Inputs */
     .auth-input { width: 100%; padding: 16px; margin-bottom: 15px; border: 1px solid var(--glass-border); border-radius: 12px; font-size: 16px; outline: none; transition: 0.3s; background: var(--glass-bg); color: white; backdrop-filter: blur(10px); }
