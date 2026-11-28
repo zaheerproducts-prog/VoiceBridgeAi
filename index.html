@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>VoiceBridge AI</title>
     <link rel="manifest" href="manifest.json">
     <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
@@ -538,6 +538,16 @@ if (window.SpeechRecognition || window.webkitSpeechRecognition) {
     rec.onend = () => micBtn.classList.remove('listening'); 
     rec.onerror = () => micBtn.classList.remove('listening');
 }
-    </script>
+    // --- FINAL KEYBOARD FIX ---
+const chatInput = document.getElementById('textInput');
+if (chatInput) {
+    chatInput.addEventListener('focus', () => {
+        // When user clicks input, scroll the chat to the bottom smoothly
+        setTimeout(() => {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, 300);
+    });
+} 
+</script>
 </body>
                 </html>
