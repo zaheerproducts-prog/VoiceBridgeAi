@@ -66,7 +66,7 @@
     .nav-icon { font-size: 24px; margin-bottom: 4px; }
     .nav-text { font-size: 12px; }
 
-    /* ========== CHAT SCREEN - FIXED HEADER FIX ========== */
+   /* ========== CHAT SCREEN - 2027 PREMIUM DESIGN ========== */
 #chatScreen {
     display: none;
     flex-direction: column;
@@ -74,8 +74,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    height: 100dvh;
+    height: 100dvh; /* Fixes mobile keyboard height */
     background: var(--bg-gradient);
     z-index: 999;
     overflow: hidden;
@@ -95,6 +94,13 @@
     border-bottom: 1px solid var(--glass-border);
 }
 
+.chat-header-left { display: flex; align-items: center; gap: 10px; }
+.chat-header-left span { font-size: 24px; cursor: pointer; padding-right: 5px; color: var(--primary); }
+.chat-header-avatar { width: 40px; height: 40px; background: #1a2a40; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; color: var(--primary); border: 1px solid var(--primary); }
+.chat-header-name { font-weight: bold; font-size: 16px; color: white; }
+.chat-header-status { font-size: 12px; color: var(--primary); }
+.chat-header-icons { display: flex; gap: 20px; font-size: 20px; cursor: pointer; color: var(--primary); }
+
 /* Language bar also stays under header */
 .lang-bar {
     display: flex;
@@ -106,6 +112,8 @@
     flex-shrink: 0;
     z-index: 20;
 }
+select { padding: 8px; border: 1px solid var(--glass-border); border-radius: 8px; font-size: 14px; background: rgba(0,0,0,0.3); color: white; width: 42%; outline: none; }
+select option { background: var(--bg-dark); color: white; }
 
 /* Messages area takes remaining space and scrolls */
 .chat-container {
@@ -131,6 +139,12 @@
     z-index: 30;
     padding-bottom: max(10px, env(safe-area-inset-bottom));
 }
+
+.input-wrapper { flex: 1; display: flex; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 25px; padding: 5px 15px; align-items: flex-end; min-height: 45px; }
+.input-wrapper textarea { flex: 1; border: none; font-size: 16px; outline: none; padding: 10px 0; background: transparent; resize: none; max-height: 100px; font-family: inherit; line-height: 1.4; color: white; }
+.input-wrapper textarea::placeholder { color: var(--text-muted); }
+.mic-btn { background: none; border: none; font-size: 24px; color: var(--primary); cursor: pointer; padding: 8px; flex-shrink: 0; filter: drop-shadow(0 0 5px var(--primary-glow)); }
+.send-btn { padding: 10px 15px; background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-weight: bold; font-size: 20px; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; box-shadow: 0 4px 15px var(--primary-glow); transition: 0.2s; }
     
     /* Call Screen */
     #call-screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 999; flex-direction: column; justify-content: center; align-items: center; color: white; }
